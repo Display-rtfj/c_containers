@@ -9,15 +9,6 @@
 
 typedef struct s_vector t_vector;
 
-typedef	struct s_vtask
-{
-	void	*(*function)();
-	void	*arg1;
-	void	*arg2;
-	void	*arg3;
-} t_vtask;
-
-
 struct s_vector {
 	void	**content;
 	size_t	size;
@@ -27,7 +18,7 @@ struct s_vector {
 	void	*(*remove_at)(t_vector *, size_t);
 	void	*(*remove_element)(t_vector *, void*);
 	void	*(*at)(t_vector *, size_t);
-	void	(*for_each)(t_vector *, t_vtask);
+	void	(*for_each)(t_vector *, void *(*)());
 	void	(*destroy)(t_vector*);
 } ;
 

@@ -66,14 +66,14 @@ void	*vector_remove_element(t_vector *vector, void *find)
 	return (element);
 }
 
-void	vector_for_each(t_vector *vector, t_vtask task)
+void	vector_for_each(t_vector *vector, void *(*function)())
 {
 	size_t index;
 
 	index = 0;
 	while (index < vector->size)
 	{
-		task.function(&(vector->content[index]), task.arg1, task.arg2, task.arg3);
+		function(&(vector->content[index]), index);
 		index++;
 	}
 }
