@@ -1,87 +1,108 @@
 #include "vector.h"
 #include <stdio.h>
 
-void	vector_expand(t_vector *vector)
+void	vector_expand(t_vector *this)
 {
 	size_t	index;
 	void	**new_array;
 
-	vector->capacity *= 2;
-	new_array = malloc(sizeof(void*) * vector->capacity);
+	this->capacity *= 2;
+	new_array = malloc(sizeof(void*) * this->capacity);
 	index = 0;
-	while (index < vector->size)
+	while (index < this->size)
 	{
-		new_array[index] = vector->content[index];
+		new_array[index] = this->content[index];
 		++index;
 	}
-	free(vector->content);
-	vector->content = new_array;
+	free(this->content);
+	this->content = new_array;
 }
 
-void	vector_push_back(t_vector *vector, void *element)
+void	vector_push_back(t_vector *this, void *element)
 {
-	if (vector->size >= vector->capacity)
-		vector_expand(vector);
-	vector->content[vector->size] = element;
-	vector->size++;
+	if (this->size >= this->capacity)
+		vector_expand(this);
+	this->content[this->size] = element;
+	this->size++;
 }
 
-void	*vector_remove_index(t_vector *vector, size_t find)
+void	*vector_remove_index(t_vector *this, size_t find)
 {
 	size_t	index;
 	void	*element;
 
-	if (find >= vector->size)
+	if (find >= this->size)
 		return (NULL);
-	element = vector->content[find];
-	vector->size--;
+	element = this->content[find];
+	this->size--;
 	index = find;
-	while (index < vector->size)
+	while (index < this->size)
 	{
-		vector->content[index] = vector->content[index + 1];
+		this->content[index] = this->content[index + 1];
 		++index;
 	}
 	return (element);
 }
 
-void	*vector_safe_access(t_vector *vector, size_t find)
+void	*vector_safe_access(t_vector *this, size_t find)
 {
-	if (find >= vector->size)
+	if (find >= this->size)
 		return (NULL);
-	return ((void*)&(vector->content[find]));
+	return ((void*)&(this->content[find]));
 }
 
-void	*vector_remove_element(t_vector *vector, void *find)
+void	*vector_remove_element(t_vector *this, void *find)
 {
 	size_t	index;
 	void	*element;
 
 	index = 0;
-	while (index < vector->size && vector->content[index] != find)
+	while (index < this->size && this->content[index] != find)
 		++index;
-	if (index >= vector->size)
+	if (index >= this->size)
 		return (NULL);
-	element = vector->content[index];
-	vector_remove_index(vector, index);
+	element = this->content[index];
+	vector_remove_index(this, index);
 	return (element);
 }
 
-void	vector_for_each(t_vector *vector, void *(*function)())
+void	vector_for_each(t_vector *this, void *(*function)())
 {
 	size_t index;
 
 	index = 0;
-	while (index < vector->size)
+	while (index < this->size)
 	{
-		function(&(vector->content[index]), index);
+		function(&(this->content[index]), index);
 		index++;
 	}
 }
 
-void	vector_destroy(t_vector *vector)
+void	vector_destroy(t_vector *this)
 {
-	free(vector->content);
-	free(vector);
+	free(this->content);
+	free(this);
+}
+
+void	vector_insert(t_vector *this, void *element, size_t position)
+{
+	size_t	index;
+
+	if (position >= this->size)
+	{
+		vector_push_back(this, element);
+		return ;
+	}
+	if (this->size >= this->capacity)
+		vector_expand(this);
+	index = this->size;
+	while (index > position)
+	{
+		this->content[index] = this->content[index - 1];
+		--index;
+	}
+	this->content[position] = element;
+	this->size++;
 }
 
 t_vector	*new_vector(void)
@@ -94,6 +115,7 @@ t_vector	*new_vector(void)
 		.size = 0,
 		.capacity = VECTOR_CAPACITY,
 		.push = vector_push_back,
+		.insert = vector_insert,
 		.remove_at = vector_remove_index,
 		.remove_element = vector_remove_element,
 		.at = vector_safe_access,

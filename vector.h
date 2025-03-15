@@ -15,6 +15,7 @@ struct s_vector {
 	size_t	capacity;
 
 	void	(*push)(t_vector*, void*);
+	void	(*insert)(t_vector*, void*, size_t);
 	void	*(*remove_at)(t_vector *, size_t);
 	void	*(*remove_element)(t_vector *, void*);
 	void	*(*at)(t_vector *, size_t);
