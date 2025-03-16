@@ -26,6 +26,21 @@ void	vector_push_back(t_vector *this, void *element)
 	this->size++;
 }
 
+void	vector_push_batch(t_vector *this, size_t argc, ...)
+{
+	size_t	index;
+	void	**list;
+
+	list = (void**)(&argc);
+	index = 0;
+	while (index < argc)
+	{
+		++list;
+		vector_push_back(this, *list);
+		++index;
+	}
+}
+
 void	*vector_remove_index(t_vector *this, size_t find)
 {
 	size_t	index;
@@ -115,6 +130,7 @@ t_vector	*new_vector(void)
 		.size = 0,
 		.capacity = VECTOR_CAPACITY,
 		.push = vector_push_back,
+		.push_batch = vector_push_batch,
 		.insert = vector_insert,
 		.remove_at = vector_remove_index,
 		.remove_element = vector_remove_element,
@@ -125,60 +141,62 @@ t_vector	*new_vector(void)
 	return (new_vector);
 }
 
-// typedef struct s_obj {
-// 	char	*name;
-// } t_obj;
+typedef struct s_obj {
+	char	*name;
+} t_obj;
 
-// void	printVectorNumber(int *number)
-// {
-// 	printf("%i, ", *number);
-// }
+void	printVectorNumber(int *number)
+{
+	printf("%i, ", *number);
+}
 
-// void	printVectorName(t_obj **person)
-// {
-// 	printf("%s, ", (*person)->name);
-// }
+void	printVectorName(t_obj **person)
+{
+	printf("%s, ", (*person)->name);
+}
 
-// t_obj	*new_obj(char *name)
-// {
-// 	t_obj	*new = malloc(sizeof(t_obj));
+t_obj	*new_obj(char *name)
+{
+	t_obj	*new = malloc(sizeof(t_obj));
 
-// 	new->name = name;
-// 	return (new);
-// }
+	new->name = name;
+	return (new);
+}
 
-// void	free_obj(void **obj)
-// {
-// 	free(*obj);
-// }
+void	free_obj(void **obj)
+{
+	free(*obj);
+}
 
-// int main(void)
-// {
-// 	t_vector	*numbers = new_vector();
-// 	t_vector	*persons = new_vector();
+int main(void)
+{
+	t_vector	*numbers = new_vector();
+	t_vector	*persons = new_vector();
 
-// 	numbers->push(numbers, V 5);
-// 	numbers->push(numbers, V 7);
-// 	numbers->push(numbers, V 8);
-// 	numbers->push(numbers, V 9);
-// 	numbers->for_each(numbers, (t_vtask){V printVectorNumber});
-// 	printf("\n");
-// 	numbers->remove_at(numbers, 2);
-// 	numbers->for_each(numbers, (t_vtask){V printVectorNumber});
-// 	printf("\n");
+	// numbers->push(numbers, V 5);
+	// numbers->push(numbers, V 7);
+	// numbers->push(numbers, V 8);
+	// numbers->push(numbers, V 9);
+	numbers->push_batch(numbers, 4, V 5, V 7, V 8, V 9);
+	numbers->for_each(numbers, V printVectorNumber);
+	printf("\n");
+	numbers->remove_at(numbers, 2);
+	numbers->for_each(numbers, V printVectorNumber);
+	printf("\n");
 
-// 	numbers->destroy(numbers);
+	numbers->destroy(numbers);
 
-// 	persons->push(persons, new_obj("amanda"));
-// 	persons->push(persons, new_obj("jose"));
-// 	persons->push(persons, new_obj("rodrigo"));
-// 	persons->push(persons, new_obj("otavio"));
-// 	persons->push(persons, new_obj("murilo"));
-// 	persons->for_each(persons, (t_vtask){V printVectorName});
-// 	printf("\n");
-// 	free(persons->remove_at(persons, 3));
-// 	persons->for_each(persons, (t_vtask){V printVectorName});
-// 	persons->for_each(persons, (t_vtask){V free_obj});
-// 	persons->destroy(persons);
-// 	return (0);
-// }
+	// persons->push(persons, new_obj("amanda"));
+	// persons->push(persons, new_obj("jose"));
+	// persons->push(persons, new_obj("rodrigo"));
+	// persons->push(persons, new_obj("otavio"));
+	// persons->push(persons, new_obj("murilo"));
+	persons->push_batch(persons, 5, new_obj("amanda"), new_obj("jose"), new_obj("rodrigo"), new_obj("otavio"), new_obj("murilo"));
+	persons->for_each(persons, V printVectorName);
+	printf("\n");
+	free(persons->remove_at(persons, 3));
+	persons->for_each(persons, V printVectorName);
+	persons->for_each(persons, V free_obj);
+	persons->destroy(persons);
+	return (0);
+}
