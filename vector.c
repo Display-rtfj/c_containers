@@ -141,6 +141,15 @@ t_vector	*new_vector(void)
 	return (new_vector);
 }
 
+t_vector	init_vector(void)
+{
+	return ((t_vector) {
+		.content = malloc(sizeof(void*) * VECTOR_CAPACITY),
+		.size = 0,
+		.capacity = VECTOR_CAPACITY
+	});
+}
+
 typedef struct s_obj {
 	char	*name;
 } t_obj;
@@ -172,6 +181,16 @@ int main(void)
 {
 	t_vector	*numbers = new_vector();
 	t_vector	*persons = new_vector();
+	t_vector	digits = init_vector();
+
+	vector_push_batch(&digits, 4, V 15, V 17, V 18, V 19);
+	vector_for_each(&digits, V printVectorNumber);
+	printf("\n");
+	vector_remove_index(&digits, 2);
+	vector_for_each(&digits, V printVectorNumber);
+	printf("\n");
+
+
 
 	// numbers->push(numbers, V 5);
 	// numbers->push(numbers, V 7);
