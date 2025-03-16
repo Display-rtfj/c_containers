@@ -14,10 +14,10 @@ struct s_string {
 	size_t	length;
 
 	void	(*dup)(t_string*);
-	void	(*combine)(t_string*, size_t, ...);
-	void	(*join)(t_string *, char*);
-	void	(*equals)(t_string *, void*);
-	void	(*contains)(t_string *, size_t);
+	void	(*chain)(t_string*, size_t, ...);
+	void	(*add)(t_string *, char*);
+	int		(*equals)(t_string *, void*);
+	int		(*contains)(t_string *, size_t);
 	void	(*for_each)(t_string *, void *(*)());
 	void	(*print)(t_string *);
 	void	(*destroy)(t_string*);
