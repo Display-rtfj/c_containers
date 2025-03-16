@@ -177,45 +177,84 @@ void	free_obj(void **obj)
 	free(*obj);
 }
 
+t_vector	vector(void)
+{
+	static	const t_vector	this = {
+		.push = vector_push_back,
+		.push_batch = vector_push_batch,
+		.insert = vector_insert,
+		.remove_at = vector_remove_index,
+		.remove_element = vector_remove_element,
+		.at = vector_safe_access,
+		.for_each = vector_for_each,
+		.destroy = vector_destroy
+	};
+
+	return (this);
+}
+
 int main(void)
 {
 	t_vector	*numbers = new_vector();
 	t_vector	*persons = new_vector();
 	t_vector	digits = init_vector();
-
-	vector_push_batch(&digits, 4, V 15, V 17, V 18, V 19);
-	vector_for_each(&digits, V printVectorNumber);
-	printf("\n");
-	vector_remove_index(&digits, 2);
-	vector_for_each(&digits, V printVectorNumber);
-	printf("\n");
+	t_vector	integers = init_vector();
 
 
+	// vector().push(numbers, V 5);
+	// vector().push(numbers, V 7);
+	// vector().push(numbers, V 8);
+	// vector().push(numbers, V 9);
+	{
+		vector().push_batch(numbers, 4, V 5, V 7, V 8, V 9);
+		vector().for_each(numbers, V printVectorNumber);
+		printf("\n");
+		vector().remove_at(numbers, 2);
+		vector().for_each(numbers, V printVectorNumber);
+		printf("\n");
+		vector().destroy(numbers);
+	}
+
+	// vector_push(numbers, V 15);
+	// vector_push(numbers, V 17);
+	// vector_push(numbers, V 18);
+	// vector_push(numbers, V 19);
+	{
+		vector_push_batch(&digits, 4, V 15, V 17, V 18, V 19);
+		vector_for_each(&digits, V printVectorNumber);
+		printf("\n");
+		vector_remove_index(&digits, 2);
+		vector_for_each(&digits, V printVectorNumber);
+		printf("\n");
+	}
 
 	// numbers->push(numbers, V 5);
 	// numbers->push(numbers, V 7);
 	// numbers->push(numbers, V 8);
 	// numbers->push(numbers, V 9);
-	numbers->push_batch(numbers, 4, V 5, V 7, V 8, V 9);
-	numbers->for_each(numbers, V printVectorNumber);
-	printf("\n");
-	numbers->remove_at(numbers, 2);
-	numbers->for_each(numbers, V printVectorNumber);
-	printf("\n");
-
-	numbers->destroy(numbers);
+	{
+		numbers->push_batch(numbers, 4, V 5, V 7, V 8, V 9);
+		numbers->for_each(numbers, V printVectorNumber);
+		printf("\n");
+		numbers->remove_at(numbers, 2);
+		numbers->for_each(numbers, V printVectorNumber);
+		printf("\n");
+		numbers->destroy(numbers);
+	}
 
 	// persons->push(persons, new_obj("amanda"));
 	// persons->push(persons, new_obj("jose"));
 	// persons->push(persons, new_obj("rodrigo"));
 	// persons->push(persons, new_obj("otavio"));
 	// persons->push(persons, new_obj("murilo"));
-	persons->push_batch(persons, 5, new_obj("amanda"), new_obj("jose"), new_obj("rodrigo"), new_obj("otavio"), new_obj("murilo"));
-	persons->for_each(persons, V printVectorName);
-	printf("\n");
-	free(persons->remove_at(persons, 3));
-	persons->for_each(persons, V printVectorName);
-	persons->for_each(persons, V free_obj);
-	persons->destroy(persons);
+	{
+		persons->push_batch(persons, 5, new_obj("amanda"), new_obj("jose"), new_obj("rodrigo"), new_obj("otavio"), new_obj("murilo"));
+		persons->for_each(persons, V printVectorName);
+		printf("\n");
+		free(persons->remove_at(persons, 3));
+		persons->for_each(persons, V printVectorName);
+		persons->for_each(persons, V free_obj);
+		persons->destroy(persons);
+	}
 	return (0);
 }
