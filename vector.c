@@ -18,11 +18,11 @@ void	vector_expand(t_vector *this)
 	this->content = new_array;
 }
 
-void	vector_push_back(void *element, t_vector *this)
+void	vector_push_back(uintptr_t element, t_vector *this)
 {
 	if (this->size >= this->capacity)
 		vector_expand(this);
-	this->content[this->size] = element;
+	this->content2[this->size] = element;
 	this->size++;
 }
 
@@ -31,12 +31,12 @@ void	vector_push_batch(t_vector *this, size_t argc, ...)
 	size_t	index;
 	void	**list;
 
-	list = (void**)(&argc);
+	list = ((void**)(&argc));
 	index = 0;
 	while (index < argc)
 	{
 		++list;
-		vector_push_back(*list, this);
+		vector_push_back((uintptr_t)*list, this);
 		++index;
 	}
 }
@@ -92,8 +92,7 @@ void	vector_for_each(void *(*function)(), t_vector *this)
 		index++;
 	}
 }
-// 'void (*)(t_vector *, void * (*)())' 
-// 'void (*)(void * (*)(), t_vector *)'
+
 void	vector_destroy(t_vector *this)
 {
 	free(this->content);
@@ -106,7 +105,7 @@ void	vector_insert(void *element, size_t position, t_vector *this)
 
 	if (position >= this->size)
 	{
-		vector_push_back(this, element);
+		vector_push_back((uintptr_t)element, this);
 		return ;
 	}
 	if (this->size >= this->capacity)
@@ -132,8 +131,8 @@ t_vector	init_vector(void)
 		.insert = vector_insert,
 		.remove_at = vector_remove_index,
 		.remove_element = vector_remove_element,
-		.find = vector_find,
-		.find_with = vector_find_with,
+		// .find = vector_find,
+		// .find_with = vector_find_with,
 		.at = vector_safe_access,
 		.for_each = vector_for_each,
 		.destroy = vector_destroy
@@ -148,45 +147,6 @@ t_vector	*new_vector(void)
 	*new_vector = init_vector();
 	return (new_vector);
 }
-
-typedef struct s_obj {
-	char	*name;
-} t_obj;
-
-void	printVectorNumber(int *number)
-{
-	printf("%i, ", *number);
-}
-
-void	printVectorName(t_obj **person)
-{
-	printf("%s, ", (*person)->name);
-}
-
-t_obj	*new_obj(char *name)
-{
-	t_obj	*new = malloc(sizeof(t_obj));
-
-	new->name = name;
-	return (new);
-}
-
-void	free_obj(void **obj)
-{
-	free(*obj);
-}
-
-	// static	const t_vector	vector = {
-	// 	.push = vector_push_back,
-	// 	.push_batch = vector_push_batch,
-	// 	.insert = vector_insert,
-	// 	.remove_at = vector_remove_index,
-	// 	.remove_element = vector_remove_element,
-	// 	.at = vector_safe_access,
-	// 	.for_each = vector_for_each,
-	// 	.destroy = vector_destroy
-	// };
-
 
 // t_ivector	vector(void)
 // {
@@ -204,6 +164,11 @@ void	free_obj(void **obj)
 // 	return (this);
 // }
 
+void	printVectorNumber(u_any *number)
+{
+	printf("%i, ", number->intv);
+}
+
 int main(void)
 {
 	t_vector	*numbers = new_vector();
@@ -217,7 +182,7 @@ int main(void)
 	// vector().push(numbers, V 9);
 	{
 		printf("<<<<<<<<<<<<<<<<<\n");
-		numbers->push(V 35, numbers);
+		numbers->push( V numbers, numbers);
 		numbers->for_each(V printVectorNumber, numbers);
 		printf("\nsize: %lli, cap: %lli\n", numbers->size, numbers->capacity);
 		numbers->push_batch(numbers, 40,
@@ -228,14 +193,11 @@ int main(void)
 		);
 		numbers->for_each(V printVectorNumber, numbers);
 		printf("\nsize: %lli, cap: %lli\n", numbers->size, numbers->capacity);
-		// numbers->push(V 5, numbers);
 		numbers->push_batch(numbers, 10,
 			25, 47, 38, 19, 100, 52, 51, 98, 99, 201
 		);
 		numbers->for_each(V printVectorNumber, numbers);
 		printf("\nsize: %lli, cap: %lli\n", numbers->size, numbers->capacity);
-		// numbers->at(4, numbers);
-		// printf("\n at %i\n", *(int*)(numbers->at(4, numbers)));
 		numbers->remove_at(2, numbers);
 		numbers->for_each(V printVectorNumber, numbers);
 		printf("\nsize: %lli, cap: %lli\n", numbers->size, numbers->capacity);
@@ -288,4 +250,29 @@ int main(void)
 	// 	persons->destroy(persons);
 	// }
 	// return (0);
+}
+
+
+typedef struct s_obj {
+	char	*name;
+} t_obj;
+
+
+
+void	printVectorName(t_obj **person)
+{
+	printf("%s, ", (*person)->name);
+}
+
+t_obj	*new_obj(char *name)
+{
+	t_obj	*new = malloc(sizeof(t_obj));
+
+	new->name = name;
+	return (new);
+}
+
+void	free_obj(void **obj)
+{
+	free(*obj);
 }

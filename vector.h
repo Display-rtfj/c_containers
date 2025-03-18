@@ -9,13 +9,32 @@
 
 typedef struct s_vector t_vector;
 typedef struct s_ivector t_ivector;
+typedef unsigned long long t_ull;
+
+typedef union {
+	void	*voidp;
+	int		intv;
+	int		*intp;
+	char	charv;
+	char	*charp;
+	long	longv;
+	long	*longp;
+} u_any;
+
+// u_any	ternary(int condition, u_any a, u_any b)
+// {
+// 	if (condition)
+// 		return (a);
+// 	return (b);
+// }
 
 struct s_vector {
 	void	**content;
+	uintptr_t	*content2;
 	size_t	size;
 	size_t	capacity;
 
-	void	(*push)(void*, t_vector*);
+	void	(*push)(uintptr_t, t_vector*);
 	void	(*push_batch)(t_vector*, size_t, ...);
 	void	(*insert)(void*, size_t, t_vector*);
 	void	*(*remove_at)(size_t, t_vector*);
@@ -27,13 +46,13 @@ struct s_vector {
 	void	(*destroy)(t_vector*);
 } ;
 
-void	vector_push_back(void*, t_vector*);
+void	vector_push_back(uintptr_t, t_vector*);
 void	vector_push_batch(t_vector*, size_t, ...);
 void	vector_insert(void*, size_t, t_vector*);
 void	*vector_remove_index(size_t, t_vector*);
 void	*vector_remove_element(void*, t_vector*);
-void	*vector_find(void*, t_vector*);					// todo
-void	*vector_find_with(void*, void*(*)(), t_vector);	// todo
+// void	*vector_find(void*, t_vector*);					// todo
+// void	*vector_find_with(void*, void*(*)(), t_vector);	// todo
 void	*vector_safe_access(size_t, t_vector*);
 void	vector_for_each(void*(*)(), t_vector*);
 void	vector_destroy(t_vector*);

@@ -9,6 +9,7 @@
 
 typedef struct s_string t_string;
 
+
 struct s_string {
 	char	*string;
 	size_t	length;
