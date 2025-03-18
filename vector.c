@@ -18,7 +18,7 @@ void	vector_expand(t_vector *this)
 	this->content = new_array;
 }
 
-void	vector_push_back(t_vector *this, void *element)
+void	vector_push_back(void *element, t_vector *this)
 {
 	if (this->size >= this->capacity)
 		vector_expand(this);
@@ -36,12 +36,12 @@ void	vector_push_batch(t_vector *this, size_t argc, ...)
 	while (index < argc)
 	{
 		++list;
-		vector_push_back(this, *list);
+		vector_push_back(*list, this);
 		++index;
 	}
 }
 
-void	*vector_remove_index(t_vector *this, size_t find)
+void	*vector_remove_index(size_t find, t_vector *this)
 {
 	size_t	index;
 	void	*element;
@@ -59,14 +59,14 @@ void	*vector_remove_index(t_vector *this, size_t find)
 	return (element);
 }
 
-void	*vector_safe_access(t_vector *this, size_t find)
+void	*vector_safe_access(size_t find, t_vector *this)
 {
 	if (find >= this->size)
 		return (NULL);
 	return ((void*)&(this->content[find]));
 }
 
-void	*vector_remove_element(t_vector *this, void *find)
+void	*vector_remove_element(void *find, t_vector *this)
 {
 	size_t	index;
 	void	*element;
@@ -77,11 +77,11 @@ void	*vector_remove_element(t_vector *this, void *find)
 	if (index >= this->size)
 		return (NULL);
 	element = this->content[index];
-	vector_remove_index(this, index);
+	vector_remove_index(index, this);
 	return (element);
 }
 
-void	vector_for_each(t_vector *this, void *(*function)())
+void	vector_for_each(void *(*function)(), t_vector *this)
 {
 	size_t index;
 
@@ -92,14 +92,15 @@ void	vector_for_each(t_vector *this, void *(*function)())
 		index++;
 	}
 }
-
+// 'void (*)(t_vector *, void * (*)())' 
+// 'void (*)(void * (*)(), t_vector *)'
 void	vector_destroy(t_vector *this)
 {
 	free(this->content);
 	free(this);
 }
 
-void	vector_insert(t_vector *this, void *element, size_t position)
+void	vector_insert(void *element, size_t position, t_vector *this)
 {
 	size_t	index;
 
@@ -120,12 +121,9 @@ void	vector_insert(t_vector *this, void *element, size_t position)
 	this->size++;
 }
 
-t_vector	*new_vector(void)
+t_vector	init_vector(void)
 {
-	t_vector	*new_vector;
-
-	new_vector = malloc(sizeof(t_vector));
-	*new_vector = (t_vector) {
+	return ((t_vector) {
 		.content = malloc(sizeof(void*) * VECTOR_CAPACITY),
 		.size = 0,
 		.capacity = VECTOR_CAPACITY,
@@ -137,17 +135,16 @@ t_vector	*new_vector(void)
 		.at = vector_safe_access,
 		.for_each = vector_for_each,
 		.destroy = vector_destroy
-	};
-	return (new_vector);
+	});
 }
 
-t_vector	init_vector(void)
+t_vector	*new_vector(void)
 {
-	return ((t_vector) {
-		.content = malloc(sizeof(void*) * VECTOR_CAPACITY),
-		.size = 0,
-		.capacity = VECTOR_CAPACITY
-	});
+	t_vector	*new_vector;
+
+	new_vector = malloc(sizeof(t_vector));
+	*new_vector = init_vector();
+	return (new_vector);
 }
 
 typedef struct s_obj {
@@ -177,84 +174,116 @@ void	free_obj(void **obj)
 	free(*obj);
 }
 
-t_vector	vector(void)
-{
-	static	const t_vector	this = {
-		.push = vector_push_back,
-		.push_batch = vector_push_batch,
-		.insert = vector_insert,
-		.remove_at = vector_remove_index,
-		.remove_element = vector_remove_element,
-		.at = vector_safe_access,
-		.for_each = vector_for_each,
-		.destroy = vector_destroy
-	};
+	// static	const t_vector	vector = {
+	// 	.push = vector_push_back,
+	// 	.push_batch = vector_push_batch,
+	// 	.insert = vector_insert,
+	// 	.remove_at = vector_remove_index,
+	// 	.remove_element = vector_remove_element,
+	// 	.at = vector_safe_access,
+	// 	.for_each = vector_for_each,
+	// 	.destroy = vector_destroy
+	// };
 
-	return (this);
-}
+
+// t_ivector	vector(void)
+// {
+// 	static	const t_ivector	this = {
+// 		.push = vector_push_batch,
+// 		.push_batch = vector_push_batch,
+// 		.insert = vector_insert,
+// 		.remove_at = vector_remove_index,
+// 		.remove_element = vector_remove_element,
+// 		.at = vector_safe_access,
+// 		.for_each = vector_for_each,
+// 		.destroy = vector_destroy
+// 	};
+
+// 	return (this);
+// }
 
 int main(void)
 {
 	t_vector	*numbers = new_vector();
-	t_vector	*persons = new_vector();
-	t_vector	digits = init_vector();
-	t_vector	integers = init_vector();
-
+	// t_vector	*persons = new_vector();
+	// t_vector	digits = init_vector();
+	// t_vector	integers = init_vector();
 
 	// vector().push(numbers, V 5);
 	// vector().push(numbers, V 7);
 	// vector().push(numbers, V 8);
 	// vector().push(numbers, V 9);
 	{
-		vector().push_batch(numbers, 4, V 5, V 7, V 8, V 9);
-		vector().for_each(numbers, V printVectorNumber);
-		printf("\n");
-		vector().remove_at(numbers, 2);
-		vector().for_each(numbers, V printVectorNumber);
-		printf("\n");
-		vector().destroy(numbers);
-	}
-
-	// vector_push(numbers, V 15);
-	// vector_push(numbers, V 17);
-	// vector_push(numbers, V 18);
-	// vector_push(numbers, V 19);
-	{
-		vector_push_batch(&digits, 4, V 15, V 17, V 18, V 19);
-		vector_for_each(&digits, V printVectorNumber);
-		printf("\n");
-		vector_remove_index(&digits, 2);
-		vector_for_each(&digits, V printVectorNumber);
-		printf("\n");
-	}
-
-	// numbers->push(numbers, V 5);
-	// numbers->push(numbers, V 7);
-	// numbers->push(numbers, V 8);
-	// numbers->push(numbers, V 9);
-	{
-		numbers->push_batch(numbers, 4, V 5, V 7, V 8, V 9);
-		numbers->for_each(numbers, V printVectorNumber);
-		printf("\n");
-		numbers->remove_at(numbers, 2);
-		numbers->for_each(numbers, V printVectorNumber);
-		printf("\n");
+		printf("<<<<<<<<<<<<<<<<<\n");
+		numbers->push(V 35, numbers);
+		numbers->for_each(V printVectorNumber, numbers);
+		printf("\nsize: %lli, cap: %lli\n", numbers->size, numbers->capacity);
+		numbers->push_batch(numbers, 40,
+			25, 47, 38, 19, 100, 52, 51, 98, 99, 201,
+			25, 47, 38, 19, 100, 52, 51, 98, 99, 201,
+			25, 47, 38, 19, 100, 52, 51, 98, 99, 201,
+			25, 47, 38, 19, 100, 52, 51, 98, 99, 201
+		);
+		numbers->for_each(V printVectorNumber, numbers);
+		printf("\nsize: %lli, cap: %lli\n", numbers->size, numbers->capacity);
+		// numbers->push(V 5, numbers);
+		numbers->push_batch(numbers, 10,
+			25, 47, 38, 19, 100, 52, 51, 98, 99, 201
+		);
+		numbers->for_each(V printVectorNumber, numbers);
+		printf("\nsize: %lli, cap: %lli\n", numbers->size, numbers->capacity);
+		// numbers->at(4, numbers);
+		// printf("\n at %i\n", *(int*)(numbers->at(4, numbers)));
+		numbers->remove_at(2, numbers);
+		numbers->for_each(V printVectorNumber, numbers);
+		printf("\nsize: %lli, cap: %lli\n", numbers->size, numbers->capacity);
+		numbers->remove_element(V 100, numbers);
+		numbers->for_each(V printVectorNumber, numbers);
+		printf("\nsize: %lli, cap: %lli\n", numbers->size, numbers->capacity);
 		numbers->destroy(numbers);
 	}
+	printf("<<<<<<<<<<<<<<<<<\n");
 
-	// persons->push(persons, new_obj("amanda"));
-	// persons->push(persons, new_obj("jose"));
-	// persons->push(persons, new_obj("rodrigo"));
-	// persons->push(persons, new_obj("otavio"));
-	// persons->push(persons, new_obj("murilo"));
-	{
-		persons->push_batch(persons, 5, new_obj("amanda"), new_obj("jose"), new_obj("rodrigo"), new_obj("otavio"), new_obj("murilo"));
-		persons->for_each(persons, V printVectorName);
-		printf("\n");
-		free(persons->remove_at(persons, 3));
-		persons->for_each(persons, V printVectorName);
-		persons->for_each(persons, V free_obj);
-		persons->destroy(persons);
-	}
-	return (0);
+	// // vector_push(numbers, V 15);
+	// // vector_push(numbers, V 17);
+	// // vector_push(numbers, V 18);
+	// // vector_push(numbers, V 19);
+	// {
+	// 	vec_push_batch(&digits, 4, V 15, V 17, V 18, V 19);
+	// 	vec_for_each(&digits, V printVectorNumber);
+	// 	printf("\n");
+	// 	vec_remove_index(&digits, 2);
+	// 	vec_for_each(&digits, V printVectorNumber);
+	// 	printf("\n");
+	// }
+
+	// // numbers->push(numbers, V 5);
+	// // numbers->push(numbers, V 7);
+	// // numbers->push(numbers, V 8);
+	// // numbers->push(numbers, V 9);
+	// {
+	// 	numbers->push_batch(numbers, 4, V 5, V 7, V 8, V 9);
+	// 	numbers->for_each(numbers, V printVectorNumber);
+	// 	printf("\n");
+	// 	numbers->remove_at(numbers, 2);
+	// 	numbers->for_each(numbers, V printVectorNumber);
+	// 	printf("\n");
+	// 	numbers->destroy(numbers);
+	// }
+
+	// // persons->push(persons, new_obj("amanda"));
+	// // persons->push(persons, new_obj("jose"));
+	// // persons->push(persons, new_obj("rodrigo"));
+	// // persons->push(persons, new_obj("otavio"));
+	// // persons->push(persons, new_obj("murilo"));
+	// {
+	// 	persons->push_batch(persons, 5, new_obj("amanda"), new_obj("jose"), new_obj("rodrigo"), new_obj("otavio"), new_obj("murilo"));
+	// 	persons->for_each(persons, V printVectorName);
+	// 	printf("\n");
+	// 	free(persons->remove_at(persons, 3));
+	// 	persons->for_each(persons, V printVectorName);
+	// 	persons->for_each(persons, V free_obj);
+	// 	persons->destroy(persons);
+	// }
+	// return (0);
 }

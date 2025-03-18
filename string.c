@@ -34,7 +34,7 @@ void	str_equals()
 
 }
 
-void	str_contains()
+int	str_contains()
 {
 
 }
@@ -59,7 +59,23 @@ t_string	*new_string()
 
 }
 
-t_string	string(void)
+t_string	str(void)
+{
+	static const t_string	this = {
+		.dup = str_dup,
+		.chain = str_combine,
+		.add = str_add,
+		.equals = str_equals,
+		.contains = str_contains,
+		.for_each = str_foreach,
+		.print = str_print,
+		.destroy = str_destroy
+	};
+
+	return (this);
+}
+
+t_string	hashmap(void)
 {
 	static const t_string	this = {
 		.dup = str_dup,
@@ -79,9 +95,29 @@ int main(void)
 {
 	t_string	name;
 	t_string	*abed;
+	t_string	functions;
 
-	string().add(&name, "lastname");
-	string().chain(abed, 3, "abed", "middlename", "lastname");
-	if (string().contains(abed, "last"))
-		string().print(abed);
+
+	while (list().next(animals) != list->head)
+	{
+
+	}
+	list().next(animals);
+	animals->next(animals);
+	hashmap().add(map, "asdasd", new_string);
+	str().add(&name, "lastname");
+	str().chain(abed, 3, "abed", "middlename", "lastname");
+	if (str().contains(abed, "last"))
+		str().print(abed);
+
+	str_add(&name, "lastname");
+	str_chain(abed, 3, "abed", "middlename", "lastname");
+	if (str_contains(abed, "last"))
+		str_print(abed);
+
+	name.add("robert", &name);
+	abed->chain(abed, 3, "abed", "middlename", "lastname");
+	if (abed->contains("robert", abed))
+		abed->print(abed);
+	str().clear(abed);
 }
