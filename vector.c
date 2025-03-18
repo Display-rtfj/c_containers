@@ -132,6 +132,8 @@ t_vector	init_vector(void)
 		.insert = vector_insert,
 		.remove_at = vector_remove_index,
 		.remove_element = vector_remove_element,
+		.find = vector_find,
+		.find_with = vector_find_with,
 		.at = vector_safe_access,
 		.for_each = vector_for_each,
 		.destroy = vector_destroy
