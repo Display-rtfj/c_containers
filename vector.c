@@ -182,7 +182,7 @@ int main(void)
 	// vector().push(numbers, V 9);
 	{
 		printf("<<<<<<<<<<<<<<<<<\n");
-		numbers->push( V numbers, numbers);
+		numbers->push('a', numbers);
 		numbers->for_each(V printVectorNumber, numbers);
 		printf("\nsize: %lli, cap: %lli\n", numbers->size, numbers->capacity);
 		numbers->push_batch(numbers, 40,
