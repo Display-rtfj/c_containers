@@ -7,22 +7,22 @@ void	vector_expand(t_vector *this)
 	void	**new_array;
 
 	this->capacity *= 2;
-	new_array = malloc(sizeof(void*) * this->capacity);
+	new_array = malloc(sizeof(intptr_t) * this->capacity);
 	index = 0;
 	while (index < this->size)
 	{
-		new_array[index] = this->content[index];
+		new_array[index] = this->data[index];
 		++index;
 	}
-	free(this->content);
-	this->content = new_array;
+	free(this->data);
+	this->data = new_array;
 }
 
-void	vector_push_back(uintptr_t element, t_vector *this)
+void	vector_push_back(t_vector *this, intptr_t element)
 {
 	if (this->size >= this->capacity)
 		vector_expand(this);
-	this->content2[this->size] = element;
+	this->data[this->size] = element;
 	this->size++;
 }
 
@@ -41,65 +41,106 @@ void	vector_push_batch(t_vector *this, size_t argc, ...)
 	}
 }
 
-void	*vector_remove_index(size_t find, t_vector *this)
+intptr_t	vector_remove_index(t_vector *this, size_t find)
 {
-	size_t	index;
-	void	*element;
+	size_t		index;
+	intptr_t	element;
 
 	if (find >= this->size)
-		return (NULL);
-	element = this->content[find];
+		return ((intptr_t)&this->data[this->size]);
+	element = this->data[find];
 	this->size--;
 	index = find;
 	while (index < this->size)
 	{
-		this->content[index] = this->content[index + 1];
+		this->data[index] = this->data[index + 1];
 		++index;
 	}
 	return (element);
 }
 
-void	*vector_safe_access(size_t find, t_vector *this)
+intptr_t	vector_safe_access(t_vector *this, size_t find)
 {
 	if (find >= this->size)
-		return (NULL);
-	return ((void*)&(this->content[find]));
+		return ((intptr_t)&this->data[this->size]);
+	return (this->data[find]);
 }
 
-void	*vector_remove_element(void *find, t_vector *this)
+intptr_t	vector_find(t_vector *this, intptr_t find)
 {
-	size_t	index;
-	void	*element;
+	size_t		index;
+	intptr_t	element;
 
 	index = 0;
-	while (index < this->size && this->content[index] != find)
+	while (index < this->size && this->data[index] != find)
 		++index;
 	if (index >= this->size)
-		return (NULL);
-	element = this->content[index];
+		return ((intptr_t)&this->data[this->size]);
+	return (this->data[index]);
+}
+
+intptr_t	vector_remove_element(t_vector *this, intptr_t find)
+{
+	size_t		index;
+	intptr_t	element;
+
+	index = 0;
+	while (index < this->size && this->data[index] != find)
+		++index;
+	if (index >= this->size)
+		return ((intptr_t)&this->data[this->size]);
+	element = this->data[index];
 	vector_remove_index(index, this);
 	return (element);
 }
 
-void	vector_for_each(void *(*function)(), t_vector *this)
+void	vector_for_each(t_vector *this, void *(*function)())
 {
 	size_t index;
 
 	index = 0;
 	while (index < this->size)
 	{
-		function(&(this->content[index]), index);
+		function(&(this->data[index]), index);
 		index++;
 	}
 }
 
 void	vector_destroy(t_vector *this)
 {
-	free(this->content);
+	free(this->data);
 	free(this);
 }
 
-void	vector_insert(void *element, size_t position, t_vector *this)
+intptr_t	vector_hot_remove_index(t_vector *this, size_t index)
+{
+	intptr_t	element;
+
+	if (index >= this->size)
+		return ((intptr_t)&this->data[this->size]);
+	element = this->data[index];
+	this->data[index] = this->data[this->size - 1];
+	this->size--;
+	return (element);
+}
+
+intptr_t	vector_hot_remove_element(t_vector *this, intptr_t element)
+{
+	size_t	index;
+	intptr_t	element;
+
+	index = 0;
+	while (index < this->size && this->data[index] != element)
+		++index;
+	if (index >= this->size)
+		return ((intptr_t)&this->data[this->size]);
+	element = this->data[index];
+	this->data[index] = this->data[this->size - 1];
+	this->size--;
+	return (element);
+}
+
+void	vector_insert(t_vector *this, void *element, size_t position)
 {
 	size_t	index;
 
@@ -113,17 +154,22 @@ void	vector_insert(void *element, size_t position, t_vector *this)
 	index = this->size;
 	while (index > position)
 	{
-		this->content[index] = this->content[index - 1];
+		this->data[index] = this->data[index - 1];
 		--index;
 	}
-	this->content[position] = element;
+	this->data[position] = element;
 	this->size++;
+}
+
+intptr_t	vector_end(t_vector *this)
+{
+	return ((intptr_t)&this->data[this->size]);
 }
 
 t_vector	init_vector(void)
 {
 	return ((t_vector) {
-		.content = malloc(sizeof(void*) * VECTOR_CAPACITY),
+		.data = malloc(sizeof(void*) * VECTOR_CAPACITY),
 		.size = 0,
 		.capacity = VECTOR_CAPACITY,
 		.push = vector_push_back,
@@ -131,11 +177,12 @@ t_vector	init_vector(void)
 		.insert = vector_insert,
 		.remove_at = vector_remove_index,
 		.remove_element = vector_remove_element,
-		// .find = vector_find,
+		.find = vector_find,
 		// .find_with = vector_find_with,
 		.at = vector_safe_access,
 		.for_each = vector_for_each,
-		.destroy = vector_destroy
+		.destroy = vector_destroy,
+		.end = vector_end,
 	});
 }
 
@@ -148,25 +195,24 @@ t_vector	*new_vector(void)
 	return (new_vector);
 }
 
-// t_ivector	vector(void)
-// {
-// 	static	const t_ivector	this = {
-// 		.push = vector_push_batch,
-// 		.push_batch = vector_push_batch,
-// 		.insert = vector_insert,
-// 		.remove_at = vector_remove_index,
-// 		.remove_element = vector_remove_element,
-// 		.at = vector_safe_access,
-// 		.for_each = vector_for_each,
-// 		.destroy = vector_destroy
-// 	};
-
-// 	return (this);
-// }
-
-void	printVectorNumber(u_any *number)
+t_pvector	*new_pvector(void)
 {
-	printf("%i, ", number->intv);
+	return ((t_pvector*)new_vector());
+}
+
+t_uvector	*new_uvector(void)
+{
+	t_uvector	*new;
+
+	new = new_vector();
+	new->remove_at = vector_hot_remove_index;
+	new->remove_element = vector_hot_remove_element;
+	return (new);
+}
+
+t_upvector	*new_upvector(void)
+{
+	return ((t_upvector*)new_uvector());
 }
 
 int main(void)
@@ -181,6 +227,7 @@ int main(void)
 	// vector().push(numbers, V 8);
 	// vector().push(numbers, V 9);
 	{
+		printf("Error: vector is not empty at start\n");
 		printf("<<<<<<<<<<<<<<<<<\n");
 		numbers->push('a', numbers);
 		numbers->for_each(V printVectorNumber, numbers);
