@@ -8,22 +8,22 @@ t_btree	btree_init()
 
 		.compare = NULL,
 		.insert = btree_insert,
-		.remove = btree_remove,
-		.search = btree_search,
-		.clear = btree_clear,
-		.destroy = btree_destroy,
+		// .remove = btree_remove,
+		// .search = btree_search,
+		// .clear = btree_clear,
+		// .destroy = btree_destroy,
 	});
 }
 
-t_btree	*new_btree(int (*compare)(void*, void*))
+t_btree	*new_btree(t_btside (*compare)(const void*, const void*))
 {
 	t_btree	*new;
 
 	new = malloc(sizeof(t_btree));
 	if (!new) return (NULL);
 
-	*new = *btree_init();
-	(void *)new->compare = compare;
+	*new = btree_init();
+	new->compare = compare;
 	return (new);
 }
 

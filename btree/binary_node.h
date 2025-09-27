@@ -2,7 +2,7 @@
 #ifndef BINARY_NODE_H
 # define BINARY_NODE_H
 
-# include <cstddef>
+# include <stdlib.h>
 
 typedef struct s_bnode {
 	void			*content;
