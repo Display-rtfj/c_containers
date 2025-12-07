@@ -1,6 +1,6 @@
 #include "binary_tree.h"
 
-t_btree	btree_init()
+t_btree	btree_init(void)
 {
 	return ((t_btree) {
 		.root = NULL,
@@ -18,6 +18,9 @@ t_btree	btree_init()
 t_btree	*new_btree(t_btside (*compare)(const void*, const void*))
 {
 	t_btree	*new;
+	t_btree	new = {
+		
+	};
 
 	new = malloc(sizeof(t_btree));
 	if (!new) return (NULL);
@@ -25,6 +28,12 @@ t_btree	*new_btree(t_btside (*compare)(const void*, const void*))
 	*new = btree_init();
 	new->compare = compare;
 	return (new);
+}
+
+void	test(t_btree this) {
+	printf("btree: %p\n", this);
+	// if (this)
+	// 	printf("root: %p, size: %zu\n", this->root, this->size);
 }
 
 void	btree_insert(t_btree* this, void *content) {
@@ -55,5 +64,10 @@ void	btree_insert(t_btree* this, void *content) {
 }
 
 int main(void) {
+	int a;
+	int b;
+	int c;
+	int d;
+
 	return 0;
 }
