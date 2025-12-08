@@ -17,6 +17,11 @@ void	vector_remove_index(t_vector *this, size_t find)
 {
 	if (find >= this->size)
 		return ;
+	if (find == this->size - 1)
+	{
+		this->size--;
+		return ;
+	}
 
 	memcpy(
 		this->data + find * this->element_size,
@@ -30,17 +35,15 @@ void	vector_remove_index(t_vector *this, size_t find)
 void	vector_remove_element(t_vector *this, void *find)
 {
 	void	*element;
-	void	*end;
 
 	element = vector_search(this, find);
-	end = vector_end(this);
-	if (element == end)
+	if (!element)
 		return ;	
 
 	memcpy(
 		element,
 		element + this->element_size,
-		end - (element + this->element_size)
+		vector_end(this) - (element + this->element_size)
 	);
 	this->size--;
 }
@@ -48,16 +51,14 @@ void	vector_remove_element(t_vector *this, void *find)
 void	vector_mix_remove_index(t_vector *this, size_t index)
 {
 	void	*found;
-	void	*end;
 
 	found = vector_at(this, index);
-	end = vector_end(this);
-	if (found == end)
+	if (!found)
 		return ;
 
 	memcpy(
 		found,
-		end - this->element_size,
+		vector_end(this) - this->element_size,
 		this->element_size
 	);
 	this->size--;
@@ -66,16 +67,14 @@ void	vector_mix_remove_index(t_vector *this, size_t index)
 void	vector_mix_remove_element(t_vector *this, void *element)
 {
 	void	*found;
-	void	*end;
 
 	found = vector_search(this, element);
-	end = vector_end(this);
-	if (found == end)
+	if (!found)
 		return ;
 
 	memcpy(
 		found,
-		end - this->element_size,
+		vector_end(this) - this->element_size,
 		this->element_size
 	);
 	this->size--;

@@ -41,26 +41,22 @@ void	indexmap_destroy(t_indexmap *this)
 // 	return (NULL);
 // }
 
-// bool	indexmap_set(t_indexmap *this, void *key, void *value)
-// {
-// 	t_idxmap_pair	*pair;
-// 	size_t			i;
+bool	indexmap_set(t_indexmap *this, void *key, void *value)
+{
+	int	index;
 
-// 	i = 0;
-// 	while (i < this->data.size)
-// 	{
-// 		pair = this->data.at(&this->data, i);
-// 		if (pair->key == key)
-// 		{
-// 			pair->value = value;
-// 			return (true);
-// 		}
-// 		i++;
-// 	}
-// 	t_idxmap_pair	new_pair = { .key = key, .value = value };
-// 	this->data.push(&this->data, &new_pair);
-// 	return (true);
-// }
+	index = this->keys.get_index(&this->keys, key);
+	if (index > -1)
+	{
+		memcpy(this->values.at(&this->values, index), value, this->values.element_size);
+	}
+	else
+	{
+		this->keys.push(&this->keys, key);
+		this->values.push(&this->values, value);
+	}
+	return (true);
+}
 
 // bool	indexmap_has(t_indexmap *this, void *key)
 // {
@@ -103,4 +99,30 @@ void	*indexmap_get(t_indexmap *this, void *key)
 
 	index = this->keys.get_index(&this->keys, key);
 	return (this->values.at(&this->values, index));
+}
+
+void	*indexmap_end(t_indexmap *this)
+{
+	return (this->values.end(&this->values));
+}
+
+int main() {
+	t_indexmap	my_map;
+	int			key;
+	char		**value;
+
+	key = 42;
+	my_map = init_indexmap(sizeof(int), sizeof(char*));
+	indexmap_set(&my_map, &key, &(char*){"The answer"});
+	indexmap_set(&my_map, &(int){69}, &(char*){"hehehe"});
+
+	value = indexmap_get(&my_map, &(int){42});
+	if (value != indexmap_end(&my_map)) {
+		write(1, "Value found: ", 13);
+		printf("%s\n", *value);
+	}
+	else
+		printf("Key not found\n");
+
+	return (0);
 }

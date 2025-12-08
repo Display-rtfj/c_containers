@@ -8,7 +8,7 @@ inline void	*vector_end(t_vector *this)
 inline void	*vector_at(t_vector *this, size_t find)
 {
 	if (find >= this->size)
-		return (vector_end(this));
+		return (NULL);
 	return (this->data + find * this->element_size);
 }
 
@@ -21,11 +21,11 @@ void	*vector_search(t_vector *this, void *find)
 	end = vector_end(this);
 	while (it < end)
 	{
-		if (!memcmp(it, find, this->element_size))
+		if (find == it || !memcmp(it, find, this->element_size))
 			return (it);
 		it += this->element_size;
 	}
-	return (it);
+	return (NULL);
 }
 
 int	vector_get_index(t_vector *this, void *find)
@@ -37,7 +37,7 @@ int	vector_get_index(t_vector *this, void *find)
 	end = vector_end(this);
 	while (it < end)
 	{
-		if (!memcmp(it, find, this->element_size))
+		if (find == it || !memcmp(it, find, this->element_size))
 			return ((it - this->data) / this->element_size);
 		it += this->element_size;
 	}
@@ -57,5 +57,5 @@ void	*vector_search_with(t_vector *this, void *find, void *(*comparator)())
 			return (it);
 		it += this->element_size;
 	}
-	return (it);
+	return (NULL);
 }

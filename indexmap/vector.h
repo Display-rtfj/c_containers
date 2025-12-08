@@ -5,6 +5,7 @@
 # include <stdlib.h>
 # include <stdint.h>
 # include <string.h>
+# include <stdio.h>
 
 # define VECTOR_CAPACITY 50
 # define V (void*)
@@ -26,7 +27,7 @@ struct s_vector {
 	void	(*remove_at)(t_vector*, size_t);
 	void	(*remove_element)(t_vector*, void*);
 	void	*(*find)(t_vector*, void*);
-	void	*(*get_index)(t_vector*, void*);
+	int		(*get_index)(t_vector*, void*);
 	void	*(*find_with)(t_vector*, void*, void*(*)());
 	void	*(*at)(t_vector*, size_t);
 	void	*(*end)(t_vector*);

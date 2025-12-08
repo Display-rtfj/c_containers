@@ -6,6 +6,12 @@ void	vector_destroy(t_vector *this)
 	free(this);
 }
 
+void	delete_vector(t_vector *this)
+{
+	vector_destroy(this);
+	free(this);
+}
+
 void	vector_expand(t_vector *this)
 {
 	this->capacity *= 2;
@@ -18,11 +24,10 @@ t_vector	init_vector(size_t size)
 		.data = malloc(size * VECTOR_CAPACITY),
 		.size = 0,
 		.capacity = VECTOR_CAPACITY,
-
 		.element_size = size,
+
 		.push = vector_push_back,
 		.get_index = vector_get_index,
-		// .push_batch = vector_push_batch,
 		.insert = vector_insert,
 		.remove_at = vector_remove_index,
 		.remove_element = vector_remove_element,
@@ -32,6 +37,7 @@ t_vector	init_vector(size_t size)
 		.for_each = vector_for_each,
 		.destroy = vector_destroy,
 		.end = vector_end,
+		// .push_batch = vector_push_batch,
 	});
 }
 
