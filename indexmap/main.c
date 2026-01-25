@@ -42,24 +42,43 @@
 typedef struct s_command {
 	int		id;
 	char	*name;
+	void	(*add)(t_command, t_command);
 }	t_command;
 
+int command_compare(void *first, void *second) {
+	t_command	*cmd;
 
-// int main() {
-// 	t_vector	all;
-// 	t_command	*command;
+	cmd = first;
+	return (cmd->id == ((t_command*)second)->id);
+}
 
-// 	all = init_vector(sizeof(t_command));
+int main() {
+	t_vector	all;
+	t_vector	numbers;
+	t_command	*command;
+	t_command	a, b;;
+	t_test		test;
 
-// 	command = vector_push_back(&all, &(t_command){1, "command_one"});
-// 	command = vector_push_back(&all, &(t_command){1, "command_one"});
-// 	command = vector_push_back(&all, &(t_command){1, "command_one"});
-// 	command = vector_push_back(&all, &(t_command){1, "command_one"});
-// 	command = vector_push_back(&all, &(t_command){1, "command_one"});
-// 	command = vector_push_back(&all, &(t_command){1, "command_one"});
-// 	command = vector_push_back(&all, &(t_command){1, "command_one"});
+	all = init_vector(sizeof(t_command));
+	numbers = init_vector(sizeof(int));
 
-// 	// element = pointers.at(&pointers, 5) && element != pointers.end(&pointers);
-// 	// element = vector_at(&pointers, 5) && element != vector_end(&pointers);
-// 	vector_destroy(&all);
-// }
+	int	add = 5;
+	vector_push_back(&numbers, &add);
+	vector_push_back(&numbers, &(int){0});
+	a.add(a, b);
+	// vector_find_with(&all, &(t_command){.id = 42}, command_compare);
+	command = vector_push_back(&all, &(t_command){.id = 42, .name = "The answer"});
+	command = vector_push_back(&all, &(t_command){.id = 42, .name = "The answer"});
+	command = vector_push_back(&all, &(t_command){.id = 42, .name = "The answer"});
+	command = vector_push_back(&all, &(t_command){.id = 42, .name = "The answer"});
+	command = vector_push_back(&all, &(t_command){.id = 42, .name = "The answer"});
+	command = vector_push_back(&all, &(t_command){.id = 42, .name = "The answer"});
+	command = vector_push_back(&all, &(t_command){.id = 42, .name = "The answer"});
+	command = vector_push_back(&all, &(t_command){.id = 42, .name = "The answer"});
+
+	command->name = "Updated answer";
+	vector_push_back(&all, &(t_command){.id = 69, .name = "hehehe"});
+	// element = pointers.at(&pointers, 5) && element != pointers.end(&pointers);
+	// element = vector_at(&pointers, 5) && element != vector_end(&pointers);
+	vector_destroy(&all);
+}

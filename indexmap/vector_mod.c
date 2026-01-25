@@ -82,17 +82,13 @@ void	vector_mix_remove_element(t_vector *this, void *element)
 
 void	vector_insert(t_vector *this, void *element, size_t position)
 {
-	void	*found;
-
 	if (position >= this->size)
 	{
 		vector_push_back(this, element);
 		return ;
 	}
 
-	found = vector_at(this, position);
-	vector_push_back(this, found);
-	memcpy(found, element, this->element_size);
+	memcpy(vector_at(this, position), element, this->element_size);
 	this->size++;
 }
 

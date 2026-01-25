@@ -3,7 +3,6 @@
 void	vector_destroy(t_vector *this)
 {
 	free(this->data);
-	free(this);
 }
 
 void	delete_vector(t_vector *this)
@@ -50,9 +49,9 @@ t_vector	*new_vector(size_t size)
 	return (new);
 }
 
-t_mixvector	*new_mixvector(size_t size)
+t_uvector	*new_uvector(size_t size)
 {
-	t_mixvector	*new;
+	t_uvector	*new;
 
 	new = new_vector(size);
 	new->remove_at = vector_mix_remove_index;

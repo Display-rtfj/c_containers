@@ -45,15 +45,13 @@ bool	indexmap_set(t_indexmap *this, void *key, void *value)
 {
 	int	index;
 
-	index = this->keys.get_index(&this->keys, key);
+	index = vector_get_index(&this->keys, key);
 	if (index > -1)
-	{
-		memcpy(this->values.at(&this->values, index), value, this->values.element_size);
-	}
+		memcpy(vector_at(&this->values, index), value, this->values.element_size);
 	else
 	{
-		this->keys.push(&this->keys, key);
-		this->values.push(&this->values, value);
+		vector_push_back(&this->keys, key);
+		vector_push_back(&this->values, value);
 	}
 	return (true);
 }
@@ -74,50 +72,52 @@ bool	indexmap_set(t_indexmap *this, void *key, void *value)
 // 	return (false);
 // }
 
-// bool	indexmap_remove(t_indexmap *this, void *key)
-// {
-// 	t_idxmap_pair	*pair;
-// 	size_t			i;
+bool	indexmap_remove(t_indexmap *this, void *key)
+{
+	size_t	index;
 
-// 	i = 0;
-// 	while (i < this->data.size)
-// 	{
-// 		pair = this->data.at(&this->data, i);
-// 		if (pair->key == key)
-// 		{
-// 			this->data.remove_at(&this->data, i);
-// 			return (true);
-// 		}
-// 		i++;
-// 	}
-// 	return (false);
-// }
+	index = vector_get_index(&this->keys, key);
+	if (index < 0)
+		return (false);
+	vector_remove_index(&this->keys, index);
+	vector_remove_index(&this->values, index);
+	return (true);
+}
 
 void	*indexmap_get(t_indexmap *this, void *key)
 {
 	int	index;
 
-	index = this->keys.get_index(&this->keys, key);
-	return (this->values.at(&this->values, index));
+	index = vector_get_index(&this->keys, key);
+	return (vector_at(&this->values, index));
 }
 
-void	*indexmap_end(t_indexmap *this)
+t_pair indexmap_end(t_indexmap *this)
 {
-	return (this->values.end(&this->values));
+	return ((t_pair){
+		vector_end(&this->keys),
+		vector_end(&this->values)
+	});
 }
 
-int main() {
-	t_indexmap	my_map;
+#define ADDR(val) ((void *)&(typeof(val)){val})
+
+int main()  {
+	t_indexmap	into_map;
+	t_indexmap	strct_map;
+	t_test		test;
 	int			key;
 	char		**value;
 
-	key = 42;
-	my_map = init_indexmap(sizeof(int), sizeof(char*));
-	indexmap_set(&my_map, &key, &(char*){"The answer"});
-	indexmap_set(&my_map, &(int){69}, &(char*){"hehehe"});
 
-	value = indexmap_get(&my_map, &(int){42});
-	if (value != indexmap_end(&my_map)) {
+	key = 42;
+
+	into_map = init_indexmap(sizeof(int), sizeof(char*));
+	indexmap_set(&into_map, &key, ADDR("The answer"));
+	indexmap_set(&into_map, ADDR(69), ADDR("hehehe"));
+
+	value = indexmap_get(&into_map, ADDR(42));
+	if (value) {
 		write(1, "Value found: ", 13);
 		printf("%s\n", *value);
 	}
@@ -126,3 +126,4 @@ int main() {
 
 	return (0);
 }
+

@@ -11,7 +11,16 @@
 # define V (void*)
 
 typedef struct s_vector t_vector;
-typedef t_vector t_mixvector;
+typedef t_vector t_uvector;
+
+typedef struct s_test
+{
+	int		id;
+	int		value;
+	int		other;
+	int		data;
+} t_test;
+
 
 struct s_vector {
 	void	*data;
@@ -36,7 +45,7 @@ struct s_vector {
 //vector_setup.c
 t_vector	init_vector(size_t size);
 t_vector	*new_vector(size_t size);
-t_mixvector	*new_mixvector(size_t size);
+t_uvector	*new_uvector(size_t size);
 void		vector_destroy(t_vector *this);
 void		vector_expand(t_vector *this);
 
