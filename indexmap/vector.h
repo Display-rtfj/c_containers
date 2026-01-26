@@ -13,15 +13,6 @@
 typedef struct s_vector t_vector;
 typedef t_vector t_uvector;
 
-typedef struct s_test
-{
-	int		id;
-	int		value;
-	int		other;
-	int		data;
-} t_test;
-
-
 struct s_vector {
 	void	*data;
 	size_t	size;
@@ -40,6 +31,7 @@ struct s_vector {
 	void	*(*find_with)(t_vector*, void*, void*(*)());
 	void	*(*at)(t_vector*, size_t);
 	void	*(*end)(t_vector*);
+	void	(*destroy)(t_vector*);
 } ;
 
 //vector_setup.c

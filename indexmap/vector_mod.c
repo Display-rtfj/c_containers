@@ -13,6 +13,18 @@ void	*vector_push_back(t_vector *this, void *element)
 	return (end);
 }
 
+void	*vector_emplace(t_vector *this)
+{
+	void	*end;
+
+	if (this->size >= this->capacity)
+		vector_expand(this);
+
+	end = vector_end(this);
+	this->size++;
+	return (end);
+}
+
 void	vector_remove_index(t_vector *this, size_t find)
 {
 	if (find >= this->size)
@@ -88,6 +100,11 @@ void	vector_insert(t_vector *this, void *element, size_t position)
 		return ;
 	}
 
+	memmove(
+		vector_at(this, position + 1),
+		vector_at(this, position),
+		(this->size - position) * this->element_size
+	);
 	memcpy(vector_at(this, position), element, this->element_size);
 	this->size++;
 }

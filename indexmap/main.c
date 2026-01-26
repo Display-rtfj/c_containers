@@ -52,33 +52,33 @@ int command_compare(void *first, void *second) {
 	return (cmd->id == ((t_command*)second)->id);
 }
 
-int main() {
-	t_vector	all;
-	t_vector	numbers;
-	t_command	*command;
-	t_command	a, b;;
-	t_test		test;
+// int main() {
+// 	t_vector	all;
+// 	t_vector	numbers;
+// 	t_command	*command;
+// 	t_command	a, b;;
+// 	t_test		test;
 
-	all = init_vector(sizeof(t_command));
-	numbers = init_vector(sizeof(int));
+// 	all = init_vector(sizeof(t_command));
+// 	numbers = init_vector(sizeof(int));
 
-	int	add = 5;
-	vector_push_back(&numbers, &add);
-	vector_push_back(&numbers, &(int){0});
-	a.add(a, b);
-	// vector_find_with(&all, &(t_command){.id = 42}, command_compare);
-	command = vector_push_back(&all, &(t_command){.id = 42, .name = "The answer"});
-	command = vector_push_back(&all, &(t_command){.id = 42, .name = "The answer"});
-	command = vector_push_back(&all, &(t_command){.id = 42, .name = "The answer"});
-	command = vector_push_back(&all, &(t_command){.id = 42, .name = "The answer"});
-	command = vector_push_back(&all, &(t_command){.id = 42, .name = "The answer"});
-	command = vector_push_back(&all, &(t_command){.id = 42, .name = "The answer"});
-	command = vector_push_back(&all, &(t_command){.id = 42, .name = "The answer"});
-	command = vector_push_back(&all, &(t_command){.id = 42, .name = "The answer"});
+// 	int	add = 5;
+// 	vector_push_back(&numbers, &add);
+// 	vector_push_back(&numbers, &(int){0});
+// 	a.add(a, b);
+// 	// vector_find_with(&all, &(t_command){.id = 42}, command_compare);
+// 	command = vector_push_back(&all, &(t_command){.id = 42, .name = "The answer"});
+// 	command = vector_push_back(&all, &(t_command){.id = 42, .name = "The answer"});
+// 	command = vector_push_back(&all, &(t_command){.id = 42, .name = "The answer"});
+// 	command = vector_push_back(&all, &(t_command){.id = 42, .name = "The answer"});
+// 	command = vector_push_back(&all, &(t_command){.id = 42, .name = "The answer"});
+// 	command = vector_push_back(&all, &(t_command){.id = 42, .name = "The answer"});
+// 	command = vector_push_back(&all, &(t_command){.id = 42, .name = "The answer"});
+// 	command = vector_push_back(&all, &(t_command){.id = 42, .name = "The answer"});
 
-	command->name = "Updated answer";
-	vector_push_back(&all, &(t_command){.id = 69, .name = "hehehe"});
-	// element = pointers.at(&pointers, 5) && element != pointers.end(&pointers);
-	// element = vector_at(&pointers, 5) && element != vector_end(&pointers);
-	vector_destroy(&all);
-}
+// 	command->name = "Updated answer";
+// 	vector_push_back(&all, &(t_command){.id = 69, .name = "hehehe"});
+// 	// element = pointers.at(&pointers, 5) && element != pointers.end(&pointers);
+// 	// element = vector_at(&pointers, 5) && element != vector_end(&pointers);
+// 	vector_destroy(&all);
+// }

@@ -1,76 +1,28 @@
 #include "indexmap.h"
 
-t_indexmap	init_indexmap(size_t key_size, size_t value_size)
+void	*indexmap_set(t_indexmap *this, void *key, void *value)
 {
-	return ((t_indexmap) {
-		.keys = init_vector(key_size),
-		.values = init_vector(value_size),
-		.compare = NULL,
-	});
-}
-
-t_indexmap	*new_indexmap(size_t key_size, size_t value_size)
-{
-	t_indexmap	*new;
-
-	new = malloc(sizeof(t_indexmap));
-	*new = init_indexmap(key_size, value_size);
-	return (new);
-}
-
-void	indexmap_destroy(t_indexmap *this)
-{
-	this->keys.destroy(&this->keys);
-	this->values.destroy(&this->values);
-	free(this);
-}
-
-// t_idxmap_pair	*indexmap_get_pair(t_indexmap *this, void *key)
-// {
-// 	size_t			i;
-// 	t_idxmap_pair	*pair;
-
-// 	i = 0;
-// 	while (i < this->data.size)
-// 	{
-// 		pair = this->data.at(&this->data, i);
-// 		if (pair->key == key)
-// 			return (pair);
-// 		i++;
-// 	}
-// 	return (NULL);
-// }
-
-bool	indexmap_set(t_indexmap *this, void *key, void *value)
-{
-	int	index;
+	int		index;
+	void	*ret;
 
 	index = vector_get_index(&this->keys, key);
-	if (index > -1)
-		memcpy(vector_at(&this->values, index), value, this->values.element_size);
+	if (index > -1) {
+		ret = vector_at(&this->values, index);
+		memcpy(ret, value, this->values.element_size);
+	}
 	else
 	{
 		vector_push_back(&this->keys, key);
-		vector_push_back(&this->values, value);
+		ret = vector_push_back(&this->values, value);
 	}
-	return (true);
+	return (ret);
 }
 
-// bool	indexmap_has(t_indexmap *this, void *key)
-// {
-// 	t_idxmap_pair	*pair;
-// 	size_t			i;
-
-// 	i = 0;
-// 	while (i < this->data.size)
-// 	{
-// 		pair = this->data.at(&this->data, i);
-// 		if (pair->key == key)
-// 			return (true);
-// 		i++;
-// 	}
-// 	return (false);
-// }
+void	*indexmap_emplace(t_indexmap *this, void *key)
+{
+	vector_push_back(&this->keys, key);
+	return (vector_emplace(&this->values));
+}
 
 bool	indexmap_remove(t_indexmap *this, void *key)
 {
@@ -92,38 +44,92 @@ void	*indexmap_get(t_indexmap *this, void *key)
 	return (vector_at(&this->values, index));
 }
 
-t_pair indexmap_end(t_indexmap *this)
-{
-	return ((t_pair){
-		vector_end(&this->keys),
-		vector_end(&this->values)
-	});
-}
-
-#define ADDR(val) ((void *)&(typeof(val)){val})
-
 int main()  {
-	t_indexmap	into_map;
+	t_indexmap	processes;
 	t_indexmap	strct_map;
-	t_test		test;
-	int			key;
-	char		**value;
+	t_process	*value;
+
+	processes = init_indexmap(sizeof(char*), sizeof(t_process));
+
+	processes.set(&processes, "nginx", &(t_process){});
+	processes.set(&processes, "frontend", &(t_process){
+		.a = 1,
+		.b = 2048,
+		.c = 'R',
+		.d = NULL
+	});
+	processes.set(&processes, "backend", &(t_process){});
+	processes.set(&processes, "database", &(t_process){});
+
+	value = processes.get(&processes, "frontend");
+	printf("frontend %i, %li, %c, %p\n", value->a, value->b, value->c, value->d);
+	value = processes.get(&processes, "nginx");
+	printf("nginx %i, %li, %c, %p\n", value->a, value->b, value->c, value->d);
 
 
-	key = 42;
-
-	into_map = init_indexmap(sizeof(int), sizeof(char*));
-	indexmap_set(&into_map, &key, ADDR("The answer"));
-	indexmap_set(&into_map, ADDR(69), ADDR("hehehe"));
-
-	value = indexmap_get(&into_map, ADDR(42));
-	if (value) {
-		write(1, "Value found: ", 13);
-		printf("%s\n", *value);
-	}
-	else
-		printf("Key not found\n");
-
+	destroy_indexmap(&processes);
 	return (0);
 }
 
+// t_idxmap_pair	*indexmap_get_pair(t_indexmap *this, void *key)
+// {
+// 	size_t			i;
+// 	t_idxmap_pair	*pair;
+
+// 	i = 0;
+// 	while (i < this->data.size)
+// 	{
+// 		pair = this->data.at(&this->data, i);
+// 		if (pair->key == key)
+// 			return (pair);
+// 		i++;
+// 	}
+// 	return (NULL);
+// }
+
+// bool	indexmap_has(t_indexmap *this, void *key)
+// {
+// 	t_idxmap_pair	*pair;
+// 	size_t			i;
+
+// 	i = 0;
+// 	while (i < this->data.size)
+// 	{
+// 		pair = this->data.at(&this->data, i);
+// 		if (pair->key == key)
+// 			return (true);
+// 		i++;
+// 	}
+// 	return (false);
+// }
+
+
+// void	indexmap_evoque_each(t_indexmap *this, size_t offset, void *arg, ...) {
+// 	size_t			i;
+// 	void			*value;
+// 	t_offset_func	method;
+// 	va_list			original;
+// 	va_list			arg_list;
+
+// 	va_start(original, arg);
+// 	i = 0;
+// 	while (i < this->keys.size) {
+// 		va_copy(arg_list, original);
+// 		value = vector_at(&this->values, i);
+
+// 		memcpy(&method, (char *)value + offset, sizeof(void *));
+// 		method(value, arg_list);
+
+// 		va_end(arg_list);
+// 		i++;
+// 	}
+// 	va_end(original);
+// }
+
+// t_pair indexmap_end(t_indexmap *this)
+// {
+// 	return ((t_pair){
+// 		vector_end(&this->keys),
+// 		vector_end(&this->values)
+// 	});
+// }
