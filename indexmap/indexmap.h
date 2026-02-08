@@ -6,7 +6,7 @@
 # include <stdarg.h>
 
 typedef struct s_indexmap	t_indexmap;
-typedef void (*t_offset_func)(void*, va_list);
+typedef struct s_indexmap	t_strmap;
 
 typedef struct s_pair {
 	void	*first;
@@ -23,7 +23,7 @@ typedef struct s_process {
 struct s_indexmap {
 	t_vector	keys;
 	t_vector	values;
-	bool 		(*compare)(void*, int);
+	bool 		(*compare)(void*, void*, size_t);
 
 	void*		(*set)(t_indexmap*, void*, void*);
 	void*		(*get)(t_indexmap*, void*);
@@ -32,11 +32,14 @@ struct s_indexmap {
 	void		(*destroy)(t_indexmap*);
 } ;
 
+//indexmap_setup.c
+void		delete_indexmap(t_indexmap *this);
 void		destroy_indexmap(t_indexmap *this);
 t_indexmap	init_indexmap(size_t key_size, size_t value_size);
 t_indexmap	*new_indexmap(size_t key_size, size_t value_size);
+t_indexmap	init_strmap(size_t value_size);
 
-
+//indexmap.c
 void	*indexmap_get(t_indexmap *this, void *key);
 bool	indexmap_remove(t_indexmap *this, void *key);
 void	*indexmap_emplace(t_indexmap *this, void *key);

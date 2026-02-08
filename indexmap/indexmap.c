@@ -8,7 +8,7 @@ void	*indexmap_set(t_indexmap *this, void *key, void *value)
 	index = vector_get_index(&this->keys, key);
 	if (index > -1) {
 		ret = vector_at(&this->values, index);
-		memcpy(ret, value, this->values.element_size);
+		memmove(ret, value, this->values.element_size);
 	}
 	else
 	{
@@ -26,7 +26,7 @@ void	*indexmap_emplace(t_indexmap *this, void *key)
 
 bool	indexmap_remove(t_indexmap *this, void *key)
 {
-	size_t	index;
+	int	index;
 
 	index = vector_get_index(&this->keys, key);
 	if (index < 0)
@@ -38,38 +38,61 @@ bool	indexmap_remove(t_indexmap *this, void *key)
 
 void	*indexmap_get(t_indexmap *this, void *key)
 {
-	int	index;
+	const int	index = vector_get_index(&this->keys, key);
 
-	index = vector_get_index(&this->keys, key);
-	return (vector_at(&this->values, index));
+	return ((index < 0) ? NULL : vector_at(&this->values, index));
 }
 
-int main()  {
-	t_indexmap	processes;
-	t_indexmap	strct_map;
-	t_process	*value;
-
-	processes = init_indexmap(sizeof(char*), sizeof(t_process));
-
-	processes.set(&processes, "nginx", &(t_process){});
-	processes.set(&processes, "frontend", &(t_process){
-		.a = 1,
-		.b = 2048,
-		.c = 'R',
-		.d = NULL
-	});
-	processes.set(&processes, "backend", &(t_process){});
-	processes.set(&processes, "database", &(t_process){});
-
-	value = processes.get(&processes, "frontend");
-	printf("frontend %i, %li, %c, %p\n", value->a, value->b, value->c, value->d);
-	value = processes.get(&processes, "nginx");
-	printf("nginx %i, %li, %c, %p\n", value->a, value->b, value->c, value->d);
-
-
-	destroy_indexmap(&processes);
-	return (0);
+int	vector_string_compare(void *first, void *second, size_t)
+{
+	return (strcmp(*(void**)first, second));
 }
+
+#define call(ptr, member, ...) \
+    ((ptr)->member(ptr, __VA_ARGS__))
+
+// int main()  {
+// 	t_indexmap	processes;
+// 	t_indexmap	strct_map;
+// 	t_process	*value;
+
+// 	call(&processes, get, 5);
+// 	processes = init_indexmap(sizeof(char*), sizeof(t_process));
+// 	processes.keys.compare = (void*)vector_string_compare;
+
+// 	processes.set(&processes, &(char*){"nginx"}, &(t_process){.d = "nginx"});
+// 	printf("nginx set\n");
+// 	processes.set(&processes, &(char*){"frontend"}, &(t_process){
+// 		.a = 1,
+// 		.b = 2048,
+// 		.c = 'R',
+// 		.d = "frontend"
+// 	});
+// 	printf("frontend set\n");
+// 	processes.set(&processes, &(char*){"backend"}, &(t_process){});
+// 	printf("backend set\n");
+// 	processes.set(&processes, &(char*){"database"}, &(t_process){});
+// 	printf("database set\n");
+
+// 	char	*frontend = strdup("frontend");
+// 	printf("pointers %p, %p\n", frontend, "frontend");
+// 	value = processes.get(&processes, "frontend");
+// 	printf("get frontend %p\n", value);
+// 	value = processes.get(&processes, frontend);
+// 	printf("get frontend2 %p\n", value);
+
+// 	if (value)
+// 		printf("frontend %i, %li, %c, %s\n", value->a, value->b, value->c, (char*)value->d);
+// 	value = processes.get(&processes, "nginx");
+// 	if (value)
+// 		printf("nginx %i, %li, %c, %s\n", value->a, value->b, value->c, (char*)value->d);
+
+
+// 	destroy_indexmap(&processes);
+// 	return (0);
+// }
+
+
 
 // t_idxmap_pair	*indexmap_get_pair(t_indexmap *this, void *key)
 // {
@@ -117,7 +140,7 @@ int main()  {
 // 		va_copy(arg_list, original);
 // 		value = vector_at(&this->values, i);
 
-// 		memcpy(&method, (char *)value + offset, sizeof(void *));
+// 		memmove(&method, (char *)value + offset, sizeof(void *));
 // 		method(value, arg_list);
 
 // 		va_end(arg_list);

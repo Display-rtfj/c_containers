@@ -1,48 +1,10 @@
 #include "vector.h"
 #include <stdio.h>
 
-//ToDo
-// void	vector_push_batch(t_vector *this, size_t argc, ...)
-// {
-// 	size_t	index;
-// 	void	**list;
-
-// 	list = ((void**)(&argc));
-// 	index = 0;
-// 	while (index < argc)
-// 	{
-// 		++list;
-// 		vector_push_back((uintptr_t)*list, this);
-// 		++index;
-// 	}
-// }
-
-
-// int main() {
-// 	t_vector	objects;
-// 	// t_vector	*pointers;
-// 	// void		*element;
-
-// 	(void)element;
-// 	pointers = new_vector(sizeof(void*));
-// 	objects = init_vector(sizeof(t_vector));
-// 	pointers = init_vector(sizeof(void*));
-
-// 	pointers.push(&pointers, malloc(sizeof(t_vector)));
-// 	element = objects.push(&objects, &(t_vector){0});
-
-// 	vector_push_back(&pointers, malloc(sizeof(t_vector)));
-// 	element = vector_push_back(&objects, &(t_vector){0});
-
-// 	// element = pointers.at(&pointers, 5) && element != pointers.end(&pointers);
-// 	// element = vector_at(&pointers, 5) && element != vector_end(&pointers);
-// 	vector_destroy(&objects);
-// }
-
 typedef struct s_command {
 	int		id;
 	char	*name;
-	void	(*add)(t_command, t_command);
+	void	(*add)(void*, void*);
 }	t_command;
 
 int command_compare(void *first, void *second) {
@@ -52,33 +14,39 @@ int command_compare(void *first, void *second) {
 	return (cmd->id == ((t_command*)second)->id);
 }
 
-// int main() {
-// 	t_vector	all;
-// 	t_vector	numbers;
-// 	t_command	*command;
-// 	t_command	a, b;;
-// 	t_test		test;
+void	print_vector(int *number, size_t index) {
+	printf("number %i, index: %zu\n", *number, index);
+}
 
-// 	all = init_vector(sizeof(t_command));
-// 	numbers = init_vector(sizeof(int));
+#define REF(x) (typeof(x)[]){x}
 
-// 	int	add = 5;
-// 	vector_push_back(&numbers, &add);
-// 	vector_push_back(&numbers, &(int){0});
-// 	a.add(a, b);
-// 	// vector_find_with(&all, &(t_command){.id = 42}, command_compare);
-// 	command = vector_push_back(&all, &(t_command){.id = 42, .name = "The answer"});
-// 	command = vector_push_back(&all, &(t_command){.id = 42, .name = "The answer"});
-// 	command = vector_push_back(&all, &(t_command){.id = 42, .name = "The answer"});
-// 	command = vector_push_back(&all, &(t_command){.id = 42, .name = "The answer"});
-// 	command = vector_push_back(&all, &(t_command){.id = 42, .name = "The answer"});
-// 	command = vector_push_back(&all, &(t_command){.id = 42, .name = "The answer"});
-// 	command = vector_push_back(&all, &(t_command){.id = 42, .name = "The answer"});
-// 	command = vector_push_back(&all, &(t_command){.id = 42, .name = "The answer"});
+int main(void) {
+	t_vector	*arr;
+	t_vector	*strings;
 
-// 	command->name = "Updated answer";
-// 	vector_push_back(&all, &(t_command){.id = 69, .name = "hehehe"});
-// 	// element = pointers.at(&pointers, 5) && element != pointers.end(&pointers);
-// 	// element = vector_at(&pointers, 5) && element != vector_end(&pointers);
-// 	vector_destroy(&all);
-// }
+	arr = new_vector(sizeof(int));
+	strings = new_vector(sizeof(char*));
+
+	strings->push_batch(strings, 3, (char*[]){"Hello", "World", "!"});
+
+	for (size_t i = 0; i < strings->size; i++) {
+		printf("%s\n", *(char**)strings->at(strings, i));
+	}
+
+	arr->push_batch(arr, 5, (int[]){10, 20, 30, 40, 50});
+	printf("index of 30: %d\n", arr->get_index(arr, (int[]){30}));
+	arr->for_each(arr, (void*)print_vector);
+	arr->remove_at(arr, 2);
+	arr->insert(arr, (int[]){25}, 2);
+	arr->for_each(arr, (void*)print_vector);
+	arr->remove_element(arr, (int[]){40});
+	arr->for_each(arr, (void*)print_vector);
+	printf("size: %zu\n", arr->size);
+	printf("index of 40: %d\n", arr->get_index(arr, (int[]){40}));
+	printf("index of 30: %d\n", arr->get_index(arr, (int[]){30}));
+	printf("index of 10: %d\n", arr->get_index(arr, (int[]){10}));
+
+	delete_vector(arr);
+	delete_vector(strings);
+	return (0);
+}
