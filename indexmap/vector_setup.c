@@ -26,6 +26,7 @@ t_vector	init_vector(size_t size)
 		.element_size = size,
 		
 		.compare = memcmp,
+		.copy = memcpy,
 		.push = vector_push_back,
 		.get_index = vector_get_index,
 		.insert = vector_insert,

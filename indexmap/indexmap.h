@@ -14,9 +14,9 @@ typedef struct s_pair {
 } t_pair;
 
 typedef struct s_process {
-	int a;
-	long b;
-	char c;
+	int		a;
+	long	b;
+	char	c;
 	void	*d;
 } t_process;
 
@@ -37,13 +37,15 @@ void		delete_indexmap(t_indexmap *this);
 void		destroy_indexmap(t_indexmap *this);
 t_indexmap	init_indexmap(size_t key_size, size_t value_size);
 t_indexmap	*new_indexmap(size_t key_size, size_t value_size);
-t_indexmap	init_strmap(size_t value_size);
+t_strmap	init_strmap(size_t value_size);
 
 //indexmap.c
 void	*indexmap_get(t_indexmap *this, void *key);
 bool	indexmap_remove(t_indexmap *this, void *key);
 void	*indexmap_emplace(t_indexmap *this, void *key);
 void	*indexmap_set(t_indexmap *this, void *key, void *value);
+
+t_strmap	*new_strmap(size_t value_size);
 
 
 #endif

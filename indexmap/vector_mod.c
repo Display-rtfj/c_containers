@@ -8,18 +8,9 @@ void	*vector_push_back(t_vector *this, void *element)
 		vector_expand(this);
 
 	end = vector_end(this);
-	memmove(end, element, this->element_size);
-	// memmove(end, element, this->element_size);
+	this->copy(end, element, this->element_size);
 	this->size++;
 	return (end);
-}
-
-void	*strvector_push_back(t_vector *this, void *element)
-{
-	void	*copy;
-
-	copy = strdup(element);
-	return (vector_push_back(this, &copy));
 }
 
 void	*vector_emplace(t_vector *this)
@@ -134,7 +125,7 @@ void	vector_for_each(t_vector *this, void *(*function)(void*, size_t))
 	}
 }
 
-void	vector_push_batch(t_vector *this, size_t count, void *batch)
+void	vector_push_batch(t_vector *this, void *batch, size_t count)
 {
 	if (count == 0 || !batch)
 		return ;

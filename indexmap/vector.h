@@ -29,11 +29,11 @@ struct s_vector {
 	size_t	capacity;
 	size_t	element_size;
 	int		(*compare)(const void*, const void*, size_t);
-	void	*(*copy)(const void*, const void*, size_t);
+	void	*(*copy)(void*, const void*, size_t);
 
 	void	*(*push)(t_vector*, void*);
 	void	*(*emplace)(t_vector*);
-	void	(*push_batch)(t_vector*, size_t, void*);
+	void	(*push_batch)(t_vector*, void*, size_t);
 	void	(*insert)(t_vector*, void*, size_t);
 	void	(*for_each)(t_vector*, void*(*)(void*, size_t));
 	void	(*remove_at)(t_vector*, size_t);
@@ -72,6 +72,9 @@ void		vector_remove_element(t_vector *this, void *find);
 void		vector_mix_remove_element(t_vector *this, void *element);
 void		vector_for_each(t_vector *this, void *(*function)(void*, size_t));
 void		*vector_emplace(t_vector *this);
-void		vector_push_batch(t_vector *this, size_t count, void *data);
+void		vector_push_batch(t_vector *this, void *batch, size_t count);
+
+void		vector_strigfy(t_vector *this);
+
 
 #endif
