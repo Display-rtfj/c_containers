@@ -17,6 +17,12 @@ void	vector_expand(t_vector *this)
 	this->data = realloc(this->data, this->element_size * this->capacity);
 }
 
+void	*vector_pointer_cpy(void *dest, const void *src, size_t)
+{
+	*(void**)dest = src;
+	return (dest);
+}
+
 t_vector	init_vector(size_t size)
 {
 	return ((t_vector) {

@@ -105,7 +105,7 @@ void	vector_insert(t_vector *this, void *element, size_t position)
 		vector_at(this, position),
 		(this->size - position) * this->element_size
 	);
-	memmove(vector_at(this, position), element, this->element_size);
+	this->copy(vector_at(this, position), element, this->element_size);
 	this->size++;
 }
 
