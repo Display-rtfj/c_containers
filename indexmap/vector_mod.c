@@ -27,6 +27,7 @@ void	*vector_emplace(t_vector *this)
 
 void	vector_remove_index(t_vector *this, size_t find)
 {
+	void	*position;
 	if (find >= this->size)
 		return ;
 	if (find == this->size - 1)
@@ -35,20 +36,19 @@ void	vector_remove_index(t_vector *this, size_t find)
 		return ;
 	}
 
+	position = vector_at(this, find);
 	memmove(
-		this->data + find * this->element_size,
-		this->data + (find + 1) * this->element_size,
+		position,
+		position + this->element_size,
 		(this->size - find - 1) * this->element_size
 	);
 	this->size--;
-	return ;
 }
 
 void	vector_remove_element(t_vector *this, void *find)
 {
-	void	*element;
+	void	*const element = vector_search(this, find);
 
-	element = vector_search(this, find);
 	if (!element)
 		return ;	
 
@@ -78,9 +78,8 @@ void	vector_mix_remove_index(t_vector *this, size_t index)
 
 void	vector_mix_remove_element(t_vector *this, void *element)
 {
-	void	*found;
+	void	*const found = vector_search(this, element);
 
-	found = vector_search(this, element);
 	if (!found)
 		return ;
 
@@ -92,20 +91,23 @@ void	vector_mix_remove_element(t_vector *this, void *element)
 	this->size--;
 }
 
-void	vector_insert(t_vector *this, void *element, size_t position)
+void	vector_insert(t_vector *this, void *element, size_t index)
 {
-	if (position >= this->size)
+	void	*position_ptr;
+
+	if (index >= this->size)
 	{
 		vector_push_back(this, element);
 		return ;
 	}
 
+	position_ptr = vector_at(this, index);
 	memmove(
-		vector_at(this, position + 1),
-		vector_at(this, position),
-		(this->size - position) * this->element_size
+		position_ptr + this->element_size,
+		position_ptr,
+		(this->size - index) * this->element_size
 	);
-	this->copy(vector_at(this, position), element, this->element_size);
+	this->copy(position_ptr, element, this->element_size);
 	this->size++;
 }
 

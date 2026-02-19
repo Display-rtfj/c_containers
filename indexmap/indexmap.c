@@ -43,11 +43,6 @@ void	*indexmap_get(t_indexmap *this, void *key)
 	return ((index < 0) ? NULL : vector_at(&this->values, index));
 }
 
-int	vector_string_compare(void *first, void *second, size_t)
-{
-	return (strcmp(*(void**)first, second));
-}
-
 #define call(ptr, member, ...) \
     ((ptr)->member(ptr, __VA_ARGS__))
 

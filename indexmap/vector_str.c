@@ -13,8 +13,10 @@ int	vector_custom_strcmp(const void *dest, const void *src, size_t)
 
 void	vector_custom_strdestroy(t_vector *this)
 {
+	void	**const data = this->data;
+
 	for (size_t index = 0; index < this->size; index++)
-		free(((void**)this->data)[index]);
+		free(data[index]);
 	vector_destroy(this);
 }
 
@@ -24,3 +26,4 @@ void	vector_strigfy(t_vector *this)
 	this->compare = vector_custom_strcmp;
 	this->destroy = vector_custom_strdestroy;
 }
+ 
