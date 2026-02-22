@@ -45,7 +45,7 @@ void	*vector_search_with(const t_vector *const this,
 
 	for (void *it = this->data; it < end; it += this->element_size)
 	{
-		if (comparator(it, find))
+		if (comparator(it, find) == 0)
 			return (it);
 	}
 	return (NULL);

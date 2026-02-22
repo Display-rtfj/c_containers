@@ -73,10 +73,8 @@ int main(void) {
 	t_command	*temp;
 	t_indexmap	*processes;
 
-	// map = new_strmap(sizeof(t_command));
-	// map->set(map, "nginx", &(t_command){.name = "nginx"});
-
 	processes = new_strmap(sizeof(t_command));
+	vector_test();
 
 	processes->set(processes, "nginx", &(t_command){.name = "nginx"});
 	temp = processes->get(processes, "nginx");
