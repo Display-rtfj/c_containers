@@ -18,7 +18,7 @@ void	*vector_search(const t_vector *const this, const void *const find)
 
 	for (void *it = this->data; it < end; it += this->element_size)
 	{
-		if (find == it || !this->compare(it, find, this->element_size))
+		if (this->compare(it, find, this->element_size) == 0)
 			return (it);
 	}
 	return (NULL);
@@ -30,7 +30,7 @@ int	vector_get_index(const t_vector *const this, const void *const find)
 
 	for (void *it = this->data; it < end; it += this->element_size)
 	{
-		if (find == it || !this->compare(it, find, this->element_size)) {
+		if (this->compare(it, find, this->element_size) == 0) {
 			return ((it - this->data) / this->element_size);
 		}
 	}
